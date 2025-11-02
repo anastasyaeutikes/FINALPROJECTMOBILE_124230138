@@ -18,6 +18,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
+  // Animasi tombol exit dan sign up
+  bool _isExitHovered = false;
+  bool _isExitPressed = false;
+  bool _isSignUpHovered = false;
+  bool _isSignUpPressed = false;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -60,13 +66,11 @@ class _SignUpPageState extends State<SignUpPage> {
 
         if (!mounted) return;
 
-        // Show success message and navigate
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Account created successfully!')),
         );
         Navigator.pushReplacementNamed(context, '/login');
       } else {
-        // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['error'] ?? 'Signup failed')),
         );
@@ -77,9 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
         SnackBar(content: Text('Error: ${e.toString()}')),
       );
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -88,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       body: Stack(
         children: [
-          // Background image
+          // ✅ Background image
           Image.asset(
             'lib/assets/salon.png',
             width: double.infinity,
@@ -96,14 +98,71 @@ class _SignUpPageState extends State<SignUpPage> {
             fit: BoxFit.cover,
           ),
 
+          // ✅ Tombol Exit (pojok kanan atas)
+          Positioned(
+            top: 40,
+            right: 20,
+            child: MouseRegion(
+              onEnter: (_) => setState(() => _isExitHovered = true),
+              onExit: (_) => setState(() {
+                _isExitHovered = false;
+                _isExitPressed = false;
+              }),
+              child: GestureDetector(
+                onTapDown: (_) => setState(() => _isExitPressed = true),
+                onTapUp: (_) {
+                  setState(() => _isExitPressed = false);
+                  Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                },
+                onTapCancel: () => setState(() => _isExitPressed = false),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: _isExitPressed
+                        ? Colors.brown.shade400
+                        : _isExitHovered
+                            ? Colors.brown.shade300.withOpacity(0.9)
+                            : Colors.brown.shade200.withOpacity(0.8),
+                    shape: BoxShape.circle,
+                    boxShadow: _isExitHovered
+                        ? [
+                            BoxShadow(
+                              color: Colors.brown.shade300.withOpacity(0.6),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ]
+                        : [],
+                  ),
+                  transform: Matrix4.identity()
+                    ..scale(_isExitPressed
+                        ? 0.9
+                        : _isExitHovered
+                            ? 1.1
+                            : 1.0),
+                  child: const Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // ✅ Kontainer form sign up
           Center(
             child: Container(
               margin: const EdgeInsets.all(24),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFFF8EFE8),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey, width: 2),
               ),
+              width: 320,
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -122,17 +181,20 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Name field
+                    // ✅ Name field (disamakan dengan kolom lain)
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        labelText: 'Name',
+                        hintText: "Name",
+                        filled: true,
+                        fillColor: Colors.white,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 12),
 
                     // Username field
                     TextField(
@@ -180,22 +242,63 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Sign Up button
-                    ElevatedButton(
-                      onPressed: _isLoading ? null : _signUp,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.brown.shade300,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    // ✅ Tombol Sign Up dengan animasi hover & klik
+                    MouseRegion(
+                      onEnter: (_) => setState(() => _isSignUpHovered = true),
+                      onExit: (_) => setState(() {
+                        _isSignUpHovered = false;
+                        _isSignUpPressed = false;
+                      }),
+                      child: GestureDetector(
+                        onTapDown: (_) =>
+                            setState(() => _isSignUpPressed = true),
+                        onTapUp: (_) {
+                          setState(() => _isSignUpPressed = false);
+                          if (!_isLoading) _signUp();
+                        },
+                        onTapCancel: () =>
+                            setState(() => _isSignUpPressed = false),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          curve: Curves.easeInOut,
+                          transform: Matrix4.identity()
+                            ..scale(_isSignUpPressed
+                                ? 0.95
+                                : _isSignUpHovered
+                                    ? 1.05
+                                    : 1.0),
+                          decoration: BoxDecoration(
+                            color: _isSignUpPressed
+                                ? Colors.brown.shade400
+                                : _isSignUpHovered
+                                    ? Colors.brown.shade300
+                                    : Colors.brown.shade300.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: _isSignUpHovered
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.brown.shade300
+                                          .withOpacity(0.5),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ]
+                                : [],
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          alignment: Alignment.center,
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white)
+                              : const Text(
+                                  "Sign Up",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                         ),
                       ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              "Sign Up",
-                              style: TextStyle(color: Colors.white),
-                            ),
                     ),
                     const SizedBox(height: 10),
 

@@ -1,22 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  /// ✅ Fungsi untuk mengecek login dan arahkan ke halaman sesuai status
-  Future<void> _handleReservation(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-    if (isLoggedIn) {
-      // Jika sudah login → langsung ke halaman treatment
-      Navigator.pushNamed(context, '/treatment');
-    } else {
-      // Jika belum login → arahkan ke halaman login
-      Navigator.pushNamed(context, '/login');
-    }
+  /// ✅ Navigasi ke CategoryPage
+  void _handleMore(BuildContext context) {
+    Navigator.pushNamed(context, '/category');
   }
 
   @override
@@ -25,40 +15,15 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Stack(
-              children: [
-                Image.asset(
-                  'lib/assets/salon.png',
-                  width: double.infinity,
-                  height: 400,
-                  fit: BoxFit.cover,
-                ),
-                Positioned(
-                  top: 50,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      NavItem(title: 'Contact Us', route: '/contact'),
-                      const SizedBox(width: 20),
-                      NavItem(title: 'Home', route: '/'),
-                      const SizedBox(width: 20),
-                      NavItem(title: 'Treatment', route: '/treatment'),
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 80,
-                  left: 30,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon:
-                        const Icon(Icons.search, color: Colors.white, size: 30),
-                  ),
-                ),
-              ],
+            // ✅ Gambar utama (header)
+            Image.asset(
+              'lib/assets/images/LoveYourSelf.jpg',
+              width: double.infinity,
+              height: 400,
+              fit: BoxFit.cover,
             ),
+
+            // ✅ Konten utama
             Container(
               width: double.infinity,
               color: const Color(0xFFF8EFE8),
@@ -67,26 +32,29 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Hair\nSalon\n“Hayyina”",
+                    "Love\nYour\nSelf",
                     style: GoogleFonts.poppins(
-                      fontSize: 28,
+                      fontSize: 32,
                       height: 1.15,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF3E2723),
                     ),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => _handleReservation(context),
+                    onPressed: () => _handleMore(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC88E63),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
+                        horizontal: 24,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: const Text(
-                      'Reservation now',
+                      'More',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
@@ -94,27 +62,6 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class NavItem extends StatelessWidget {
-  final String title;
-  final String route;
-
-  const NavItem({super.key, required this.title, required this.route});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, route),
-      child: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 14,
-          color: Colors.black87,
         ),
       ),
     );

@@ -23,7 +23,11 @@ flutter:
 
   assets:
     - .env
-    - lib/assets/
+    - lib/assets/images/LoveYourSelf.jpg
+    - lib/assets/images/haircare.jpg
+    - lib/assets/images/skincare.jpg
+    - lib/assets/images/bodycare.jpg
+    - lib/assets/images/nailcare.jpg
 
   fonts:
     - family: Poppins

@@ -4,7 +4,7 @@ import 'services/supabase_client.dart';
 import 'views/home_page.dart';
 import 'views/login_page.dart';
 import 'views/signup_page.dart';
-import 'views/treatment_page.dart';
+import 'views/category_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Hayyina Salon',
+      title: 'Love Your Self',
       theme: ThemeData(
         fontFamily: 'Poppins',
         scaffoldBackgroundColor: const Color(0xFFF8EFE8),
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const HomePage(),
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignUpPage(),
-        '/treatment': (context) => const TreatmentPage(),
+        '/category': (context) => const CategoryPage(),
       },
     );
   }
